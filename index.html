@@ -150,13 +150,14 @@ nav.scrolled {
 .nav-links {
     display: flex;
     align-items: center;
-    gap: 28px;
+    gap: 26px;
 }
 
 .nav-links a {
     color: var(--muted);
     font-size: 0.92rem;
     transition: 0.2s;
+    white-space: nowrap;
 }
 
 .nav-links a:hover {
@@ -177,6 +178,22 @@ nav.scrolled {
     color: white;
     font-size: 1.5rem;
     cursor: pointer;
+}
+.github-link {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  color: #9b8cff;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.github-link:hover {
+  color: #c0b6ff;
+  text-decoration: none;
+  transform: scale(1.03);
 }
 
 /* =========================================================
@@ -265,6 +282,9 @@ nav.scrolled {
     font-size: 0.94rem;
 
     transition: 0.25s ease;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
 }
 
 .button-primary {
@@ -410,6 +430,14 @@ nav.scrolled {
         0 0 30px rgba(45, 212, 191, 0.25);
 
     user-select: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(145deg, rgba(45,212,191,0.18), rgba(56,189,248,0.12));
+    color: var(--primary);
 }
 
 .avatar img {
@@ -551,6 +579,7 @@ nav.scrolled {
     justify-content: space-between;
     gap: 25px;
     margin-bottom: 22px;
+    flex-wrap: wrap;
 }
 
 .experience-header h3 {
@@ -567,6 +596,10 @@ nav.scrolled {
     color: var(--muted);
     white-space: nowrap;
     font-size: 0.85rem;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    height: fit-content;
 }
 
 .experience-card ul {
@@ -582,6 +615,96 @@ nav.scrolled {
 .highlight {
     color: var(--primary);
     font-weight: 700;
+}
+
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+}
+
+.tag-pill {
+    padding: 6px 13px;
+    border: 1px solid rgba(45,212,191,0.25);
+    background: rgba(45,212,191,0.06);
+    border-radius: 100px;
+    color: var(--primary);
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+/* =========================================================
+   PERSONAL PROJECTS
+   ========================================================= */
+
+.projects-grid {
+    margin-top: 55px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.project-card {
+    padding: 32px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    border-radius: var(--radius);
+    transition: 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card:hover {
+    border-color: rgba(45,212,191,0.3);
+    background: var(--card-hover);
+    transform: translateY(-4px);
+}
+
+.project-index {
+    font-size: 0.75rem;
+    color: var(--primary);
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    margin-bottom: 14px;
+}
+
+.project-card h3 {
+    font-size: 1.12rem;
+    margin-bottom: 14px;
+    line-height: 1.35;
+}
+
+.project-card p {
+    color: var(--muted);
+    font-size: 0.92rem;
+    margin-bottom: 0;
+    flex-grow: 1;
+}
+
+.project-card.wide {
+    grid-column: span 2;
+}
+
+.project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+
+    color: var(--primary);
+    font-size: 0.86rem;
+    font-weight: 700;
+    width: fit-content;
+}
+
+.project-link:hover {
+    color: var(--blue);
 }
 
 /* =========================================================
@@ -696,6 +819,59 @@ nav.scrolled {
 }
 
 /* =========================================================
+   TOAST
+   ========================================================= */
+
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 34px;
+    transform: translateX(-50%) translateY(20px);
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 14px 22px;
+    border-radius: 100px;
+
+    border: 1px solid rgba(45,212,191,0.3);
+    background: rgba(13, 20, 32, 0.96);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.4);
+
+    color: var(--text);
+    font-size: 0.88rem;
+    font-weight: 600;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    z-index: 2000;
+}
+
+.toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #06100e;
+    font-size: 0.7rem;
+    font-weight: 900;
+    flex-shrink: 0;
+}
+
+/* =========================================================
    FOOTER
    ========================================================= */
 
@@ -740,6 +916,17 @@ footer {
     transform: translateY(0);
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+    .cursor {
+        animation: none;
+    }
+}
+
 /* =========================================================
    RESPONSIVE
    ========================================================= */
@@ -766,6 +953,14 @@ footer {
 
     .stack-grid {
         grid-template-columns: 1fr;
+    }
+
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .project-card.wide {
+        grid-column: span 1;
     }
 }
 
@@ -852,11 +1047,13 @@ footer {
             <a href="#about">About</a>
             <a href="#skills">Skills</a>
             <a href="#experience">Experience</a>
-            <a href="#credentials">Credentials</a>
+            <a href="#projects">Projects</a>
+            <a href="#certifications">Certifications</a>
 
             <a
                 class="nav-button"
-                href="mailto:shandromitra@gmail.com">
+                href="mailto:shandromitra@gmail.com"
+                onclick="return handleEmailClick(event)">
                 Let's Connect
             </a>
         </div>
@@ -893,7 +1090,7 @@ footer {
 
             <p class="hero-description">
                 I'm <strong>Shandro Mitra</strong>, a Data Engineer with
-                2+ years of experience building scalable ETL/ELT pipelines
+                close to 3 years of experience building scalable ETL/ELT pipelines
                 using Azure Databricks, PySpark, SQL, Azure Data Factory
                 and modern Lakehouse technologies.
             </p>
@@ -925,7 +1122,7 @@ footer {
             <div class="hero-stats">
 
                 <div class="stat">
-                    <strong>2+</strong>
+                    <strong>3+</strong>
                     <span>Years Experience</span>
                 </div>
 
@@ -935,8 +1132,8 @@ footer {
                 </div>
 
                 <div class="stat">
-                    <strong>Azure</strong>
-                    <span>Data Engineering Stack</span>
+                    <strong>6</strong>
+                    <span>Independent Data Projects</span>
                 </div>
 
             </div>
@@ -975,10 +1172,16 @@ footer {
                 </div>
 
                 <div class="code-line">
+                    &nbsp;&nbsp;company:
+                    <span class="code-value">"Tata Consultancy Services"</span>,
+                </div>
+
+                <div class="code-line">
                     &nbsp;&nbsp;stack: [
                     <span class="code-value">"Databricks"</span>,
                     <span class="code-value">"PySpark"</span>,
-                    <span class="code-value">"SQL"</span>
+                    <span class="code-value">"SQL"</span>,
+                    <span class="code-value">"Airflow"</span>
                     ],
                 </div>
 
@@ -1028,7 +1231,7 @@ footer {
         <div class="profile-card reveal">
 
             <div class="avatar">
-                <img src="shandro.png" alt="Shandro Mitra" draggable="false">
+                SM
             </div>
 
             <h3>Shandro Mitra</h3>
@@ -1097,17 +1300,20 @@ footer {
             </h2>
 
             <p>
-                I am a Data Engineer with hands-on experience designing,
-                building and optimizing scalable ELT and ETL pipelines.
-                My core expertise lies in Azure Databricks, PySpark, SQL,
-                Azure Data Factory and ADLS Gen2.
+                I am a Data Engineer with close to three years of hands-on
+                experience designing, building and optimizing scalable ELT
+                and ETL pipelines. My core expertise lies in Azure Databricks,
+                PySpark, SQL, Azure Data Factory and ADLS Gen2.
             </p>
 
             <p>
                 I have worked with modern data engineering patterns including
                 Medallion Architecture, Delta Lake and Lakehouse Architecture.
                 My work involves transforming raw data into reliable,
-                optimized and production-ready datasets.
+                optimized and production-ready datasets, and I regularly
+                extend that experience through independent projects covering
+                Delta Live Tables, workflow orchestration, RAG-based AI
+                systems and CI/CD for data platforms.
             </p>
 
             <p>
@@ -1182,8 +1388,8 @@ footer {
                 <h3>Lakehouse Architecture</h3>
 
                 <p>
-                    Delta Lake, Medallion Architecture and modern
-                    Lakehouse design patterns.
+                    Delta Lake, Delta Live Tables, Medallion Architecture
+                    and modern Lakehouse design patterns.
                 </p>
             </div>
 
@@ -1230,20 +1436,20 @@ footer {
                 <h3>Data Quality</h3>
 
                 <p>
-                    Production data validation, discrepancy resolution
+                    Production data validation, quarantine frameworks
                     and reliability-focused engineering workflows.
                 </p>
             </div>
 
 
             <div class="skill-card reveal">
-                <div class="skill-icon">◉</div>
+                <div class="skill-icon">⚙</div>
 
-                <h3>Analytics & BI</h3>
+                <h3>Orchestration & CI/CD</h3>
 
                 <p>
-                    Qlik Sense and experience supporting data-driven
-                    analytical applications.
+                    Apache Airflow, Databricks Workflows, GitHub Actions
+                    and Databricks Asset Bundles.
                 </p>
             </div>
 
@@ -1273,8 +1479,9 @@ footer {
             </h2>
 
             <p class="section-description">
-                Experience across enterprise data engineering,
-                production workflows, data quality and large-scale platforms.
+                Nearly three years of experience across enterprise data
+                engineering, production workflows, data quality and
+                large-scale cloud platforms.
             </p>
 
         </div>
@@ -1310,50 +1517,64 @@ footer {
                     <ul>
 
                         <li>
-                            Built and supported ELT pipelines for
-                            <span class="highlight">Customer 360 data</span>
-                            using Azure Databricks and PySpark following
-                            the Medallion Architecture.
+                            Architected and maintained
+                            <span class="highlight">Customer 360</span>
+                            ELT pipelines on Azure Databricks and PySpark,
+                            following the Medallion Architecture to deliver
+                            clean, analytics-ready data to downstream teams.
                         </li>
 
                         <li>
-                            Developed transformation notebooks for onboarding
-                            new datasets and implemented Delta Lake for
-                            optimized storage.
+                            Engineered Delta Lake-based transformation
+                            notebooks for onboarding new datasets, improving
+                            storage efficiency and enabling reliable
+                            incremental processing.
                         </li>
 
                         <li>
-                            Used Azure Data Factory to ingest data from
-                            multiple sources into ADLS Gen2.
+                            Designed multi-source ingestion workflows in
+                            Azure Data Factory to consolidate data into
+                            ADLS Gen2 across diverse upstream systems.
                         </li>
 
                         <li>
-                            Configured secure authentication between
-                            Databricks and ADLS Gen2 using
-                            Service Principals.
+                            Implemented secure, enterprise-grade
+                            authentication between Databricks and
+                            ADLS Gen2 using Service Principals.
                         </li>
 
                         <li>
-                            Orchestrated workflows using Databricks Workflows
-                            and optimized queries through data-skew handling
-                            and partitioning, achieving a
+                            Optimized distributed workloads through
+                            partitioning and data-skew mitigation
+                            strategies, achieving a
                             <span class="highlight">
-                                60% reduction in execution time.
+                                60% reduction in pipeline execution time.
                             </span>
                         </li>
 
                         <li>
-                            Contributed to migrating legacy notebook-based
-                            workflows to Delta Live Tables, improving
-                            observability and automating data quality.
+                            Led the migration of legacy notebook-based
+                            workflows to Delta Live Tables, strengthening
+                            pipeline observability and automating data
+                            quality enforcement.
                         </li>
 
                         <li>
-                            Resolved production data discrepancies using
-                            SQL queries and data validation checks.
+                            Diagnosed and resolved production data
+                            discrepancies through root-cause analysis,
+                            SQL-based validation and cross-team collaboration.
                         </li>
 
                     </ul>
+
+                    <div class="tag-row">
+                        <span class="tag-pill">Azure Databricks</span>
+                        <span class="tag-pill">PySpark</span>
+                        <span class="tag-pill">Delta Live Tables</span>
+                        <span class="tag-pill">Azure Data Factory</span>
+                        <span class="tag-pill">ADLS Gen2</span>
+                        <span class="tag-pill">SQL</span>
+                    </div>
 
                 </div>
 
@@ -1388,23 +1609,255 @@ footer {
                     <ul>
 
                         <li>
-                            Utilized data analysis and fraud detection tools
-                            to identify and mitigate platform abuse.
+                            Applied data analysis and fraud-detection
+                            techniques to identify and mitigate platform
+                            abuse within the e-commerce environment.
                         </li>
 
                         <li>
-                            Supported the integrity of the e-commerce
-                            environment through data-driven prevention
-                            approaches.
-                        </li>
-
-                        <li>
-                            Monitored evolving e-commerce abuse trends
-                            and contributed to prevention strategies.
+                            Investigated evolving abuse patterns and
+                            contributed data-driven prevention strategies
+                            to safeguard platform integrity.
                         </li>
 
                     </ul>
 
+                    <div class="tag-row">
+                        <span class="tag-pill">Data Analysis</span>
+                        <span class="tag-pill">Fraud Detection</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PERSONAL PROJECTS
+===================================================== -->
+
+<section id="projects">
+
+    <div class="container">
+
+        <div class="reveal">
+
+            <div class="section-tag">
+                04 — Personal Projects
+            </div>
+
+            <h2 class="section-title">
+                Independent builds, industry-grade thinking.
+            </h2>
+
+            <p class="section-description">
+                Self-directed projects built to explore production-style
+                data platform patterns end to end — from ingestion and
+                orchestration to governance, deployment and applied AI.
+            </p><br>
+            <p class="section-description">
+                All project source code, guides, and screenshots are available on my <a
+                href="https://github.com/shandro-dev" class = " github-link"
+                target="_blank"
+                rel="noopener noreferrer">
+
+                GitHub 
+            </a>
+            </p>
+
+        </div>
+
+
+        <div class="projects-grid">
+
+            <!-- Project 1 -->
+            <div class="project-card wide reveal">
+
+                <div class="project-index">01 / FRAUD DETECTION</div>
+
+                <h3>FinTech Fraud Detection Data Warehouse</h3>
+
+                <p>
+                    An end-to-end fraud detection data warehouse built on
+                    Databricks that simulates a real-world banking system,
+                    generating synthetic transaction, login and device data
+                    with Faker. Models structured fact and dimension tables
+                    to track user behavior, merchant activity and device
+                    usage, with
+                    <span class="highlight">fraud simulation logic</span>
+                    that flags suspicious transactions based on behavioral
+                    anomalies. Built entirely with
+                    <span class="highlight">Delta Live Tables</span>
+                    across the Medallion Architecture — Bronze streaming
+                    ingestion, Silver with SCD Type 2 and data quality
+                    checks, and Gold for curated KPIs and fraud insights —
+                    all on Delta Lake for ACID-compliant, scalable storage.
+                    A dedicated
+                    <span class="highlight">quarantine layer</span>
+                    isolates records with excessive nulls or corruption
+                    before they reach Silver, letting users choose to
+                    reload or discard them without polluting the warehouse.
+                </p>
+
+                <div class="tag-row">
+                    <span class="tag-pill">Databricks</span>
+                    <span class="tag-pill">Delta Live Tables</span>
+                    <span class="tag-pill">PySpark</span>
+                    <span class="tag-pill">Medallion Architecture</span>
+                    <span class="tag-pill">Delta Lake</span>
+                    <span class="tag-pill">SCD Type 2</span>
+                </div>
+
+            </div>
+
+            <!-- Project 2: RAG AI Assistant -->
+            <div class="project-card wide reveal">
+
+                <div class="project-index">02 / APPLIED AI</div>
+
+                <h3>Enterprise Knowledge AI Assistant</h3>
+
+                <p>
+                    A <span class="highlight">RAG-based</span> knowledge
+                    assistant built with LangChain and LLMs that lets
+                    organizations dump their internal HR and enterprise
+                    documentation — spanning HR Policies, Leave &
+                    Attendance, Compensation & Benefits, Insurance & Claims,
+                    Performance & Career, Learning & Development, Travel &
+                    Expenses, IT & Technology, Workplace Health & Safety,
+                    Employee Wellbeing, Rewards & Recognition, Payroll &
+                    Tax Information, Workplace Conduct & Ethics, Data
+                    Privacy & Security, Remote & Hybrid Work, Grievances &
+                    Complaints, Whistleblower & Reporting, DEI, Onboarding
+                    and Offboarding resources — into a single knowledge
+                    base. Employees interact through a conversational
+                    AI interface that retrieves relevant policy context via
+                    a
+                    <span class="highlight">retrieval-augmented generation
+                    pipeline</span>
+                    and answers questions step by step, while the assistant
+                    is scoped to stay strictly within organizational
+                    knowledge and decline unrelated queries.
+                </p>
+
+                <div class="tag-row">
+                    <span class="tag-pill">RAG</span>
+                    <span class="tag-pill">LangChain</span>
+                    <span class="tag-pill">LLMs</span>
+                    <span class="tag-pill">Vector Search</span>
+                    <span class="tag-pill">Python</span>
+                </div>
+
+                <a
+                    href="https://github.com/shandro-dev/ENTERPRISE_KNOWLEDGE_AI_ASSISTANT"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="project-link">
+                    View on GitHub ↗
+                </a>
+
+            </div>
+
+            <!-- Project 3 -->
+            <div class="project-card reveal">
+
+                <div class="project-index">03 / MONITORING</div>
+
+                <h3>Weather & Near-Earth Object Alert System</h3>
+
+                <p>
+                    An Airflow-orchestrated monitoring system integrating
+                    the Open-Meteo API and NASA's Near Earth Object (NEO)
+                    API. The weather pipeline ingests, cleans, validates
+                    and loads meteorological data, detecting extreme
+                    conditions and triggering automated email alerts. The
+                    space pipeline ingests and validates asteroid data,
+                    evaluates potential threat proximity and sends its own
+                    alert notifications.
+                </p>
+
+                <div class="tag-row">
+                    <span class="tag-pill">Apache Airflow</span>
+                    <span class="tag-pill">Python</span>
+                    <span class="tag-pill">REST APIs</span>
+                    <span class="tag-pill">Alerting</span>
+                </div>
+
+            </div>
+
+            <!-- Project 4 -->
+            <div class="project-card reveal">
+
+                <div class="project-index">04 / DEVOPS</div>
+
+                <h3>Databricks CI/CD Deployment Pipeline</h3>
+
+                <p>
+                    A CI/CD workflow for Databricks code using GitHub
+                    Actions with the Databricks CLI and Asset Bundles,
+                    automating deployment across Dev, QA and Prod
+                    workspaces. Approved pull requests to each branch
+                    automatically merge and deploy the corresponding
+                    pipelines to their target workspace, streamlining
+                    release management across environments.
+                </p>
+
+                <div class="tag-row">
+                    <span class="tag-pill">GitHub Actions</span>
+                    <span class="tag-pill">Databricks Asset Bundles</span>
+                    <span class="tag-pill">CI/CD</span>
+                </div>
+
+            </div>
+
+            <!-- Project 5 -->
+            <div class="project-card reveal">
+
+                <div class="project-index">05 / GOVERNANCE</div>
+
+                <h3>Databricks Platform Governance ETL</h3>
+
+                <p>
+                    An ETL pipeline built for platform and admin teams to
+                    monitor cost, DBU consumption, workloads, access,
+                    data lineage, security and compliance across teams.
+                    Automates ingestion monitoring and data quality checks,
+                    with alerts for unusually high compute usage.
+                </p>
+
+                <div class="tag-row">
+                    <span class="tag-pill">Databricks</span>
+                    <span class="tag-pill">Governance</span>
+                    <span class="tag-pill">Cost Monitoring</span>
+                </div>
+
+            </div>
+
+            <!-- Project 6 -->
+            <div class="project-card reveal">
+
+                <div class="project-index">06 / AUTOMATION</div>
+
+                <h3>Automated Job Matching & Alert Pipeline</h3>
+
+                <p>
+                    An ETL pipeline that ingests job postings from multiple
+                    APIs and matches them against a user's title, location
+                    and skillset criteria, sending a daily email with direct
+                    application links. A unique key per job posting prevents
+                    duplicate alerts for the same listing.
+                </p>
+
+                <div class="tag-row">
+                    <span class="tag-pill">Python</span>
+                    <span class="tag-pill">ETL</span>
+                    <span class="tag-pill">API Integration</span>
                 </div>
 
             </div>
@@ -1427,7 +1880,7 @@ footer {
         <div class="reveal">
 
             <div class="section-tag">
-                04 — Engineering Focus
+                05 — Engineering Focus
             </div>
 
             <h2 class="section-title">
@@ -1498,8 +1951,8 @@ footer {
                 <h3>Trustworthy Data</h3>
 
                 <p>
-                    Building validation into workflows and resolving
-                    production discrepancies to improve confidence
+                    Building validation and quarantine logic into workflows
+                    to resolve discrepancies and improve confidence
                     in data.
                 </p>
 
@@ -1515,8 +1968,9 @@ footer {
                 <h3>Production Workflows</h3>
 
                 <p>
-                    Working with Databricks Workflows and Azure Data Factory
-                    to orchestrate repeatable and manageable data processes.
+                    Working with Databricks Workflows, Airflow and Azure
+                    Data Factory to orchestrate repeatable, manageable
+                    data processes.
                 </p>
 
             </div>
@@ -1532,7 +1986,8 @@ footer {
 
                 <p>
                     Continuously exploring modern data engineering practices,
-                    cloud technologies and the evolving Databricks ecosystem.
+                    cloud technologies, applied AI and the evolving
+                    Databricks ecosystem.
                 </p>
 
             </div>
@@ -1545,21 +2000,21 @@ footer {
 
 
 <!-- =====================================================
-     CREDENTIALS
+     CERTIFICATIONS
 ===================================================== -->
 
-<section id="credentials">
+<section id="certifications">
 
     <div class="container">
 
         <div class="reveal">
 
             <div class="section-tag">
-                05 — Credentials
+                06 — Certifications
             </div>
 
             <h2 class="section-title">
-                Education & certifications.
+                Certifications & education.
             </h2>
 
         </div>
@@ -1642,7 +2097,7 @@ footer {
         <div class="contact-box reveal">
 
             <div class="section-tag">
-                06 — Let's Connect
+                07 — Let's Connect
             </div>
 
             <h2>
@@ -1661,7 +2116,8 @@ footer {
 
                 <a
                     href="mailto:shandromitra@gmail.com"
-                    class="button button-primary">
+                    class="button button-primary"
+                    onclick="return handleEmailClick(event)">
 
                     Send Me an Email ✉
                 </a>
@@ -1684,6 +2140,16 @@ footer {
 </section>
 
 </main>
+
+
+<!-- =====================================================
+     TOAST NOTIFICATION
+===================================================== -->
+
+<div class="toast" id="toast">
+    <span class="toast-check">✓</span>
+    <span id="toastText">Email address copied</span>
+</div>
 
 
 <!-- =====================================================
@@ -1813,10 +2279,63 @@ revealElements.forEach(element => {
 document.getElementById("year").textContent =
     new Date().getFullYear();
 
-/* DISABLE RIGHT-CLICK ON PROFILE IMAGE */
-document.querySelector(".avatar").addEventListener("contextmenu", event => {
-    event.preventDefault();
-});
+
+/* EMAIL BUTTON — COPY TO CLIPBOARD + OPEN MAIL CLIENT */
+
+const EMAIL_ADDRESS = "shandromitra@gmail.com";
+
+let toastTimeout;
+
+function showToast(message) {
+
+    const toast = document.getElementById("toast");
+    const toastText = document.getElementById("toastText");
+
+    toastText.textContent = message;
+
+    toast.classList.add("visible");
+
+    clearTimeout(toastTimeout);
+
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove("visible");
+    }, 2600);
+
+}
+
+function handleEmailClick(event) {
+
+    // Copy the email address to the clipboard.
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+
+        navigator.clipboard.writeText(EMAIL_ADDRESS)
+            .then(() => showToast("Email address copied: " + EMAIL_ADDRESS))
+            .catch(() => showToast(EMAIL_ADDRESS));
+
+    } else {
+
+        // Fallback for older browsers without Clipboard API support.
+        const tempInput = document.createElement("input");
+        tempInput.value = EMAIL_ADDRESS;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+
+        try {
+            document.execCommand("copy");
+            showToast("Email address copied: " + EMAIL_ADDRESS);
+        } catch (err) {
+            showToast(EMAIL_ADDRESS);
+        }
+
+        document.body.removeChild(tempInput);
+
+    }
+
+    // Let the browser's default mailto: behavior proceed as normal
+    // (opens the default mail client if one is configured).
+    return true;
+
+}
 
 </script>
 
