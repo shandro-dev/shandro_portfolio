@@ -397,23 +397,30 @@ nav.scrolled {
 }
 
 .avatar {
-    width: 80px;
-    height: 80px;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 20px;
+    width: 125px;
+    height: 125px;
     margin-bottom: 25px;
 
-    background:
-        linear-gradient(135deg,
-        var(--primary),
-        var(--blue));
+    border-radius: 50%;
+    overflow: hidden;
 
-    color: #071019;
-    font-size: 1.8rem;
-    font-weight: 900;
+    border: 3px solid var(--primary);
+
+    box-shadow:
+        0 0 30px rgba(45, 212, 191, 0.25);
+
+    user-select: none;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
 .profile-card h3 {
@@ -1021,7 +1028,7 @@ footer {
         <div class="profile-card reveal">
 
             <div class="avatar">
-                SM
+                <img src="shandro.jpg" alt="Shandro Mitra" draggable="false">
             </div>
 
             <h3>Shandro Mitra</h3>
@@ -1803,9 +1810,13 @@ revealElements.forEach(element => {
 
 
 /* CURRENT YEAR */
-
 document.getElementById("year").textContent =
     new Date().getFullYear();
+
+/* DISABLE RIGHT-CLICK ON PROFILE IMAGE */
+document.querySelector(".avatar").addEventListener("contextmenu", event => {
+    event.preventDefault();
+});
 
 </script>
 
