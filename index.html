@@ -2649,7 +2649,7 @@ var PEOPLE = [
         cursors.slice()
             .sort(function () { return Math.random() - 0.5; })
             .forEach(function (c, i) {
-                c.follow = i < 6;                              // 3 random cursors
+                c.follow = i < 6;                              // 6 random cursors
                 c.k = 0.05 + Math.random() * 0.09;             // each trails at its own pace
                 c.a = Math.random() * Math.PI * 2;
                 c.r = 45 + Math.random() * 110;
