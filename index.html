@@ -928,6 +928,64 @@ footer {
 }
 
 /* =========================================================
+   SWARM BUILD ANIMATION
+   ========================================================= */
+
+/* Hidden until a cursor "builds" it. Opacity/translate only, so layout never shifts. */
+.sw-hide { opacity: 0; transform: translateY(14px); transition: none !important; }
+.sw-hide.sw-show {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.6s ease, transform 0.6s ease !important;
+}
+
+/* Fixed overlay: never adds scroll width or blocks clicks */
+.sw-layer {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1500;
+}
+
+.sw-box {
+    position: absolute;
+    box-sizing: border-box;
+    border: 1.5px dashed;
+    border-radius: 14px;
+    opacity: 0;
+}
+
+.sw-cursor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    will-change: transform;
+}
+
+.sw-cursor.on { opacity: 1; }
+
+.sw-cursor svg {
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+}
+
+.sw-cursor span {
+    position: absolute;
+    left: 14px;
+    top: 16px;
+    padding: 2px 9px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #06100e;
+    white-space: nowrap;
+}
+
+/* =========================================================
    RESPONSIVE
    ========================================================= */
 
@@ -2362,6 +2420,362 @@ function handleEmailClick(event) {
 
 }
 
+</script>
+
+
+<!-- =====================================================
+     SWARM BUILD ANIMATION
+     Each section block starts hidden. As it scrolls into view,
+     a cursor flies to it, draws a dashed box around it, and the
+     block appears inside the box. Plays by default on every load.
+     At the bottom (and back at the top) a few cursors follow the real mouse.
+===================================================== -->
+
+<script>
+(function () {
+
+    var SELECTORS = [
+        ".hero .hero-badge",
+        ".hero h1",
+        ".hero .hero-description",
+        ".hero .hero-actions",
+        ".hero .hero-stats",
+        ".terminal",
+        ".container > .reveal:first-child",   // section headers, profile card, contact box
+        ".about-content",
+        ".skill-card",
+        ".timeline-item",
+        ".project-card",
+        ".stack-card",
+        ".credential-card"
+    ].join(",");
+
+    var found = Array.prototype.slice.call(document.querySelectorAll(SELECTORS));
+
+    // Keep only outermost blocks so nothing is built twice
+    var pending = found.filter(function (el) {
+        return !found.some(function (other) {
+            return other !== el && other.contains(el);
+        });
+    });
+
+    if (!pending.length) return;
+
+    // The swarm replaces the old fade-in for these blocks
+    pending.forEach(function (el) {
+        el.classList.remove("reveal");
+        el.classList.add("sw-hide");
+    });
+
+    var layer = document.createElement("div");
+    layer.className = "sw-layer";
+    layer.setAttribute("aria-hidden", "true");
+    document.body.appendChild(layer);
+
+var PEOPLE = [
+    ["PySpark", "#2dd4bf"],
+    ["Warehouse", "#38bdf8"],
+    ["Lakehouse",       "#a78bfa"],
+    ["ETL",       "#e879f9"],
+    ["Spark",     "#fb923c"],
+    ["RAG",      "#60a5fa"]
+];
+
+    var count = window.innerWidth < 700 ? 3 : 10;
+
+    var cursors = PEOPLE.slice(0, count).map(function (p) {
+        var node = document.createElement("div");
+        node.className = "sw-cursor";
+        node.innerHTML =
+            '<svg width="18" height="20" viewBox="0 0 18 20">' +
+            '<path d="M1 1l5.5 17 2.6-7 7-2.6z" fill="' + p[1] + '" ' +
+            'stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/></svg>' +
+            '<span style="background:' + p[1] + '">' + p[0] + '</span>';
+        layer.appendChild(node);
+        return {
+            node: node, color: p[1],
+            x: 0, y: 0,            // current screen position
+            ax: 0, ay: 0,          // page-anchored position while lingering (scrolls with the page)
+            on: false, task: null, idleAt: 0,
+            follow: false, k: 0.08, a: 0, r: 80, nextAt: 0
+        };
+    });
+
+    var pointer = { x: 0, y: 0, seen: false };   // the visitor's real mouse
+    var reachedBottom = false;
+    var followOn = false;
+    var running = false;
+    var lastAssign = 0;
+    var lastNow = 0;
+
+    /* ---------- helpers ---------- */
+
+    function ease(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function clamp(v, min, max) {
+        return Math.max(min, Math.min(max, v));
+    }
+
+    function inView(el) {
+        var r = el.getBoundingClientRect();
+        return r.height > 0 && r.top < window.innerHeight * 0.95 && r.bottom > 0;
+    }
+
+    function draw(c, x, y) {
+        c.x = x;
+        c.y = y;
+        c.node.style.transform = "translate3d(" + x + "px," + y + "px,0)";
+    }
+
+    function clampX(x) { return clamp(x, 4, window.innerWidth - 70); }
+    function clampY(y) { return clamp(y, 4, window.innerHeight - 24); }
+
+    function setBox(box, x, y, w, h) {
+        box.style.left = x + "px";
+        box.style.top = y + "px";
+        box.style.width = w + "px";
+        box.style.height = h + "px";
+    }
+
+    // First appearance: slide in from a random screen edge
+    function spawn(c) {
+        var w = window.innerWidth, h = window.innerHeight;
+        var side = Math.floor(Math.random() * 4);
+        draw(
+            c,
+            side === 0 ? -30 : side === 1 ? w + 30 : Math.random() * w,
+            side === 2 ? -30 : side === 3 ? h + 30 : Math.random() * h
+        );
+        c.on = true;
+        c.node.classList.add("on");
+    }
+
+    // Shows a block (fade + slide in), once
+    function reveal(el) {
+        if (el._swDone) return;
+        el._swDone = true;
+        el.classList.add("sw-show");
+        setTimeout(function () {
+            el.classList.remove("sw-hide", "sw-show");
+        }, 750);
+    }
+
+    // True when the visitor is at the bottom, or back at the top after having been to the bottom
+    function atEnd() {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        var y = window.scrollY;
+        if (max - y < 140) {
+            reachedBottom = true;
+            return true;
+        }
+        return reachedBottom && y < 140;
+    }
+
+    /* ---------- one build task: move -> draw box -> reveal ---------- */
+
+    function start(c, el) {
+        var box = document.createElement("div");
+        box.className = "sw-box";
+        box.style.borderColor = c.color;
+        box.style.background = c.color + "14";
+        layer.appendChild(box);
+
+        if (!c.on) spawn(c);
+
+        var r = el.getBoundingClientRect();
+        var dist = Math.hypot(r.left - c.x, r.top - c.y);
+
+        c.task = {
+            el: el,
+            box: box,
+            phase: 0,
+            clock: 0,
+            fx: c.x,
+            fy: c.y,
+            dur: clamp(250 + dist * 0.45, 350, 900)
+        };
+    }
+
+    function finish(c) {
+        var t = c.task;
+        reveal(t.el);
+        if (t.box.parentNode) t.box.parentNode.removeChild(t.box);
+        c.task = null;
+        c.ax = c.x;
+        c.ay = c.y + window.scrollY;     // stay attached to the page while fading out
+        c.idleAt = lastNow;
+    }
+
+    function step(c, dt, speed) {
+        var t = c.task;
+        var r = t.el.getBoundingClientRect();
+
+        // Scrolled out of reach: finish instantly so the swarm never lags behind the scroll
+        if (r.bottom < -20 || r.top > window.innerHeight + 20) {
+            finish(c);
+            return;
+        }
+
+        t.clock += dt * speed;
+        var p;
+
+        if (t.phase === 0) {                       // fly to the top-left corner
+            p = ease(Math.min(1, t.clock / t.dur));
+            var tx = clampX(r.left), ty = clampY(r.top);
+            draw(c, t.fx + (tx - t.fx) * p, t.fy + (ty - t.fy) * p);
+            if (p >= 1) { t.phase = 1; t.clock = 0; }
+
+        } else if (t.phase === 1) {                // drag out the box
+            p = ease(Math.min(1, t.clock / 450));
+            t.box.style.opacity = 1;
+            setBox(t.box, r.left, r.top, r.width * p, r.height * p);
+            draw(c, clampX(r.left + r.width * p), clampY(r.top + r.height * p));
+            if (p >= 1) { t.phase = 2; t.clock = 0; reveal(t.el); }
+
+        } else {                                   // content appears, box fades
+            p = Math.min(1, t.clock / 500);
+            setBox(t.box, r.left, r.top, r.width, r.height);
+            t.box.style.opacity = 1 - p;
+            draw(c, clampX(r.left + r.width), clampY(r.top + r.height));
+            if (p >= 1) finish(c);
+        }
+    }
+
+    /* ---------- follow mode: a few cursors trail the real mouse ---------- */
+
+    function enterFollow(now) {
+        cursors.slice()
+            .sort(function () { return Math.random() - 0.5; })
+            .forEach(function (c, i) {
+                c.follow = i < 6;                              // 3 random cursors
+                c.k = 0.05 + Math.random() * 0.09;             // each trails at its own pace
+                c.a = Math.random() * Math.PI * 2;
+                c.r = 45 + Math.random() * 110;
+                c.nextAt = now + 2500 + Math.random() * 3000;
+            });
+    }
+
+    function exitFollow(now) {
+        cursors.forEach(function (c) {
+            if (c.follow) {
+                c.follow = false;
+                c.ax = c.x;
+                c.ay = c.y + window.scrollY;
+                c.idleAt = now;
+            }
+        });
+    }
+
+    function followStep(c, now, dt) {
+        if (!c.on) spawn(c);
+
+        if (now > c.nextAt) {                       // drift to a new spot around the mouse
+            c.a = Math.random() * Math.PI * 2;
+            c.r = 45 + Math.random() * 110;
+            c.nextAt = now + 2500 + Math.random() * 3000;
+        }
+
+        var tx = clampX(pointer.x + Math.cos(c.a) * c.r);
+        var ty = clampY(pointer.y + Math.sin(c.a) * c.r);
+        var k = 1 - Math.pow(1 - c.k, dt / 16.7);
+
+        draw(c, c.x + (tx - c.x) * k, c.y + (ty - c.y) * k);
+    }
+
+    /* ---------- scheduler ---------- */
+
+    function frame(now) {
+
+        var dt = lastNow ? Math.min(50, now - lastNow) : 16;
+        lastNow = now;
+
+        // Blocks the visitor already scrolled past appear instantly
+        for (var i = pending.length - 1; i >= 0; i--) {
+            if (pending[i].getBoundingClientRect().bottom < 0) {
+                reveal(pending[i]);
+                pending.splice(i, 1);
+            }
+        }
+
+        var visible = pending.filter(inView);
+        var busy = cursors.filter(function (c) { return c.task; }).length;
+
+        // The more blocks waiting on screen, the faster the swarm works
+        var speed = clamp(1 + (visible.length + busy - cursors.length) * 0.3, 1, 3);
+
+        // Send an idle cursor to the topmost waiting block
+        if (visible.length && now - lastAssign > 70 / speed) {
+            var pool = cursors.filter(function (c) { return !c.task; });
+            if (pool.length) {
+                pool.sort(function (a, b) { return (b.on ? 1 : 0) - (a.on ? 1 : 0); });
+                var el = visible.shift();
+                pending.splice(pending.indexOf(el), 1);
+                pool[0].follow = false;
+                start(pool[0], el);
+                lastAssign = now;
+            }
+        }
+
+        // Follow the real mouse once everything on screen is built and the visitor is at the bottom (or back at the top)
+        var anyTask = cursors.some(function (c) { return c.task; });
+        var following = !visible.length && !anyTask && pointer.seen && atEnd();
+
+        if (following && !followOn) enterFollow(now);
+        if (!following && followOn) exitFollow(now);
+        followOn = following;
+
+        var sy = window.scrollY;
+        var active = false;
+
+        cursors.forEach(function (c) {
+            if (c.task) {
+                step(c, dt, speed);
+                active = true;
+            } else if (c.follow) {
+                followStep(c, now, dt);
+                active = true;
+            } else if (c.on) {
+                draw(c, c.ax, c.ay - sy);           // lingering cursors scroll with the page
+                if (!visible.length && now - c.idleAt > 900) {
+                    c.on = false;
+                    c.node.classList.remove("on");
+                } else {
+                    active = true;
+                }
+            }
+        });
+
+        if (active || visible.length || following) {
+            requestAnimationFrame(frame);
+        } else {
+            running = false;      // sleeps until the next scroll / resize / mouse move at the ends
+            lastNow = 0;
+        }
+    }
+
+    function kick() {
+        if (!running) {
+            running = true;
+            requestAnimationFrame(frame);
+        }
+    }
+
+    window.addEventListener("scroll", kick, { passive: true });
+    window.addEventListener("resize", kick);
+
+    window.addEventListener("pointermove", function (e) {
+        if (e.pointerType === "touch") return;
+        pointer.x = e.clientX;
+        pointer.y = e.clientY;
+        pointer.seen = true;
+        if (atEnd()) kick();
+    }, { passive: true });
+
+    kick();
+
+})();
 </script>
 
 </body>
